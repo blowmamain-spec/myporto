@@ -97,18 +97,18 @@ export default async function HomePage() {
                 {/* Tengah: Area Nama + Background Responsif (tanpa rounded-lg -> sudut tajam) */}
         <div className="relative my-4 flex flex-1 min-h-[38vh] items-end overflow-hidden md:items-center">
           {/* Lapis 1A: Foto Desktop hanya mengisi 48% sisi kanan (rasio ~3:2 -> tidak nge-zoom!) */}
-          {heroDesktop && (
-            <div className="pointer-events-none absolute inset-y-0 right-0 left-0 opacity-0 transition-opacity duration-500 ease-out md:left-auto md:w-[48%] md:opacity-100">
+                    {heroDesktop && (
+            <div className="pointer-events-none absolute inset-y-0 right-0 left-0 opacity-0 transition-opacity duration-500 ease-out md:left-auto md:w-[55%] md:opacity-100">
               <Image
                 src={heroDesktop}
                 alt="Hero backdrop desktop"
                 fill
                 priority
                 unoptimized={heroDesktop.endsWith(".gif")}
-                className="object-cover object-center"
+                className="object-contain object-right"
               />
-              {/* Gradasi halus di tepi kiri foto agar menyatu ke latar hitam di belakang nama */}
-              <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/30 to-transparent" />
+              {/* Gradasi halus di tepi kiri foto agar menyatu ke latar hitam */}
+              <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/20 to-transparent" />
             </div>
           )}
 

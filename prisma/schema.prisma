@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProjectCategory {
+  FULLSTACK
+  CYBERSEC
+  DATA_AI
+}
+
+enum ExperienceType {
+  WORK
+  LAB
+  CERT
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+model Project {
+  id        String          @id @default(cuid())
+  slug      String          @unique
+  title     String
+  tagline   String
+  summary   String
+  content   String
+  category  ProjectCategory @default(FULLSTACK)
+  techStack String[]        @map("tech_stack")
+  liveUrl   String?         @map("live_url")
+  repoUrl   String?         @map("repo_url")
+  featured  Boolean         @default(false)
+  published Boolean         @default(true)
+  sortOrder Int             @default(0) @map("sort_order")
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([published, sortOrder])
+  @@index([category, published])
+  @@map("projects")
+}
+
+model Experience {
+  id           String         @id @default(cuid())
+  role         String
+  organization String
+  period       String
+  type         ExperienceType @default(WORK)
+  highlights   String[]
+  sortOrder    Int            @default(0) @map("sort_order")
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([type, sortOrder])
+  @@map("experiences")
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    MessageStatus @default(UNREAD)
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([status, createdAt])
+  @@map("contact_messages")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("admin_users")
+}
+
+model NoteTopic {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  sortOrder   Int      @default(0) @map("sort_order")
+  notes       Note[]
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([sortOrder])
+  @@map("note_topics")
+}
+
+model Note {
+  id          String    @id @default(cuid())
+  topicId     String    @map("topic_id")
+  topic       NoteTopic @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  slug        String    @unique
+  title       String
+  summary     String?
+  content     String
+  tags        String[]
+  published   Boolean   @default(false)
+  publishedAt DateTime? @map("published_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([topicId, published, publishedAt])
+  @@index([published, publishedAt])
+  @@map("notes")
+}

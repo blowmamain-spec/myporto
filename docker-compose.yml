@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: myporto_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: myporto
+      POSTGRES_PASSWORD: myporto_dev_password
+      POSTGRES_DB: myporto_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - myporto_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myporto -d myporto_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+volumes:
+  myporto_pgdata:
